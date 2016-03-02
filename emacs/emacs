@@ -1,0 +1,156 @@
+(require 'package) ;; You might already have this line
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
+
+;; Load personal directory
+(let ((base "~/.emacs.d/personal"))
+  (add-to-list 'load-path base)
+  (dolist (f (directory-files base))
+    (let ((name (concat base "/" f)))
+      (when (and (file-directory-p name)
+                 (not (equal f ".."))
+                 (not (equal f ".")))
+        (add-to-list 'load-path name)))))
+
+;; Parenthesis
+(show-paren-mode 1)
+
+;; IDO Mode
+(require 'ido)
+(ido-mode t)
+
+;; Tern Mode
+(add-to-list 'load-path "~/.emacs.d/tern/emacs/tern.el")
+(autoload 'tern-mode "tern.el" nil t)
+
+;; Themes
+;;(load-theme 'wombat t)
+(load-theme 'cobalt t t)
+(enable-theme 'cobalt)
+
+;; Indentation
+(setq-default indent-tabs-mode nil)
+(setq tab-width 2)
+(setq ruby-indent-level 2)
+(setq css-indent-level 2)
+(setq js-indent-level 2)
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-css-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
+
+;; Copy to Mac OS X clipboard
+(defun pbcopy ()
+  (interactive)
+  (call-process-region (point) (mark) "pbcopy")
+  (setq deactivate-mark t))
+
+(defun pbpaste ()
+  (interactive)
+  (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t))
+
+(defun pbcut ()
+  (interactive)
+  (pbcopy)
+  (delete-region (region-beginning) (region-end)))
+
+(global-set-key (kbd "C-c c") 'pbcopy)
+(global-set-key (kbd "C-c v") 'pbpaste)
+(global-set-key (kbd "C-c x") 'pbcut)
+
+;; Eradicate little menu bar
+(menu-bar-mode -1)
+
+;; CSS
+(defcustom css-indent-offset 2
+"Number of spaces to indent lines in CSS mode"
+:group 'css
+:type 'integer)
+
+;; Enable web-mode
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+
+;; Move backup and temporary files to tmp directory
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+;; linum configuration
+(require 'hlinum)
+(hlinum-activate)
+(global-linum-mode 1)
+(setq linum-format "%3d ")
+(set-face-attribute 'fringe nil :background "#666")
+(set-face-attribute 'linum nil :background "#666")
+
+;; Key Mappings
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-c h o") 'helm-occur)
+
+;; Aggressive Indent
+(require 'aggressive-indent)
+(global-aggressive-indent-mode 1)
+(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+(add-to-list 'aggressive-indent-excluded-modes 'web-mode)
+(add-to-list 'aggressive-indent-excluded-modes 'css-mode)
+
+;; auto-complete
+(require 'auto-complete-config)
+(global-auto-complete-mode 1)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(ac-config-default)
+
+;; enh-ruby-mode
+(autoload 'enh-ruby-mode "enh-ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
+
+;;; UTF-8 everywhere
+(set-language-environment 'utf-8)
+(set-default-coding-systems 'utf-8)
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+;; simpleclip
+(require 'simpleclip)
+(simpleclip-mode 1)
+
+;; helm
+(require 'helm-config)
+
+;; Hide ^M
+(defun remove-dos-eol ()
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
+
+;; Made by magit
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-branch-arguments nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

@@ -1,0 +1,283 @@
+" Ctrl-W t Ctrl-W K -> Moves vsplit to hsplit
+" Ctrl-W t Ctrl-W H -> Moves hsplit to vsplit
+" Ctrl-W [s/v] take same buffer and split vertically / horizontally
+
+execute pathogen#infect()
+ 
+syntax on
+ 
+filetype plugin indent on
+ 
+let mapleader = ';'
+
+set ruler
+set cursorline
+set t_Co=256
+set wrapscan
+set number
+set autoindent
+set expandtab
+set tabstop=2
+set sw=2
+set background=dark
+set showmode
+set showcmd
+set hidden
+set visualbell
+set ttyfast
+set ruler
+set backspace=indent,eol,start
+set norelativenumber
+set history=1000
+set undofile
+set undoreload=10000
+set autowrite
+set autoread
+set shiftround
+set title
+set linebreak
+set notimeout " Performance
+set ttimeout  " Performance
+set ttimeoutlen=10 " Performance
+set mouse=a
+set shell=zsh
+set autoread
+set lazyredraw
+
+"set list
+"set matchtime=3
+"set showbreak=↪
+"set splitbelow
+"set splitright
+"set foldmethod=syntax
+"let g:ruby_fold = 1
+ 
+colorscheme wombat256
+
+" Faster grep /ack -> ag
+let g:ackprg = 'ag --vimgrep'
+ 
+" Performance
+let loaded_matchparen = 1
+
+" Indentation
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors=0
+let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
+let g:indent_guides_color_change_percent=100
+
+hi IndentGuidesOdd ctermbg=235
+hi IndentGuidesEven ctermbg=243
+ 
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+ 
+" FileTypes
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd Filetype javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+
+" JS libraries
+let g:used_javascript_libs = 'angularjs'
+autocmd BufReadPre *.js let b:javascript_lib_use_angularjs = 1
+autocmd BufReadPre *.js let b:javascript_lib_use_jquery = 1
+
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" Ignore ionic HTML tags
+let g:syntastic_html_tidy_ignore_errors = [
+    \  "plain text isn''t allowed in <head> elements",
+    \  "<base> escaping malformed URI reference",
+    \  "discarding unexpected <body>",
+    \  "<script> escaping malformed URI reference",
+    \  "</head> isn''t allowed in <body> elements",
+    \  "<ion-view> is not recognized!",
+    \  " is not recognized!",
+    \  " proprietary attribute \"ng-",
+    \  " proprietary attribute \"novalidate\""
+    \ ]
+
+" Powerline configuration
+source /Users/tinymonkey/Library/Python/2.7/lib/python/site-packages/powerline/bindings/vim/plugin/powerline.vim
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
+let g:Powerline_symbols = 'fancy'
+ 
+set fillchars+=stl:\ ,stlnc:\
+set laststatus=2
+
+" Clipboard configuration
+set clipboard=unnamed
+ 
+set splitbelow
+set splitright
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Force hjkl navigation in Normal Mode
+noremap   <Up>     <NOP>
+noremap   <Down>   <NOP>
+noremap   <Left>   <NOP>
+noremap   <Right>  <NOP>
+ 
+" Remove line numbers
+nnoremap <leader># :setlocal number!<cr>
+ 
+" Buffer navigation
+map <leader>n :bn<cr>
+map <leader>x :bw<cr>
+map <leader>p :bp<cr>
+map <leader>a :badd
+map <leader>w :w!<cr>
+map <leader>q :q!<cr>
+nnoremap <leader>b :buffers<cr>:vert sb<Space>
+
+" Search Navigation
+map <leader>s :%s/
+set incsearch        " Find the next match as we type the search
+set hlsearch         " Highlight searches by default
+set viminfo='100,f1  " Save up to 100 marks, enable capital marks
+
+" Wildmenu and wildignores for files
+set wildmenu
+set wildmode=longest,list,full
+set wildignore+=.git,.svn
+set wildignore+=*.jpg,*.png,*.bmp,*.gif,*.jpeg
+set wildignore+=*.sw?
+set wildignore+=*.log,*.lock
+ 
+" Clean trailing whitespace
+nnoremap <leader>w mz:%s/\s\+$//<cr>:let @/=''<cr>`z
+ 
+" Remove u when when trying to hit y for yank
+vnoremap u <nop>
+vnoremap gu u
+ 
+" Diffoff
+nnoremap <leader>D :diffoff!<cr>
+ 
+" Fugitive
+nnoremap <leader>gd :Gdiff<cr>
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gw :Gwrite<cr>
+nnoremap <leader>ga :Gadd<cr>
+nnoremap <leader>gb :Gblame<cr>
+nnoremap <leader>gco :Gcheckout<cr>
+nnoremap <leader>gci :Gcommit<cr>
+nnoremap <leader>gm :Gmove<cr>
+nnoremap <leader>gr :Gremove<cr>
+nnoremap <leader>gl :Shell git gl -18<cr>:wincmd \|<cr>
+ 
+" Resize splits when window is resized
+au VimResized * :wincmd =
+ 
+" Used to expand all folds and easy access for fold toggle
+" autocmd VimEnter * execute "normal zR"
+ 
+" Space to toggle folds.
+nnoremap <Space> za
+vnoremap <Space> za
+ 
+" Sudo to write
+cnoremap w!! w !sudo tee % >/dev/null
+ 
+" Typos
+command! -bang E e<bang>
+command! -bang Q q<bang>
+command! -bang W w<bang>
+command! -bang QA qa<bang>
+command! -bang Qa qa<bang>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>
+command! -bang Wq wq<bang>
+command! -bang WQ wq<bang>
+ 
+" Use sane regexes.
+nnoremap / /\v
+vnoremap / /\v
+ 
+" Searches
+set ignorecase
+set smartcase
+set incsearch
+set showmatch
+set hlsearch
+set gdefault
+ 
+set scrolloff=3
+set sidescroll=1
+set sidescrolloff=10
+ 
+set virtualedit+=block
+
+" Set JSX for .js file extensions
+let g:jsx_ext_required = 0
+
+" Start scrolling when we're getting close to margins
+set scrolloff=10
+set sidescrolloff=15
+set sidescroll=1
+ 
+" Clear search highlighting
+noremap <silent> <leader><space> :noh<cr>
+ 
+" Redraw screen on hiccups
+nnoremap U :syntax sync fromstart<cr>:redraw!<cr>
+ 
+" Backups
+set backup                        " enable backups
+set noswapfile                    " It's 2012, Vim.
+ 
+set undodir=~/.vim/tmp/undo/     " undo files
+set backupdir=~/.vim/tmp/backup/ " backups
+set directory=~/.vim/tmp/swap/   " swap files
+ 
+" Make folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+  call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+  call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+  call mkdir(expand(&directory), "p")
+endif
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+" Scrolling
+"function SmoothScroll(up)
+    "if a:up
+        "let scrollaction="^Y"
+    "else
+        "let scrollaction="^E"
+    "endif
+    "exec "normal " . scrollaction
+    "redraw
+    "let counter=1
+    "while counter<&scroll
+        "let counter+=1
+        "sleep 10m
+        "redraw
+        "exec "normal " . scrollaction
+    "endwhile
+"endfunction
+
+"nnoremap <C-U> :call SmoothScroll(1)<Enter>
+"nnoremap <C-D> :call SmoothScroll(0)<Enter>
+"inoremap <C-U> <Esc>:call SmoothScroll(1)<Enter>i
+"inoremap <C-D> <Esc>:call SmoothScroll(0)<Enter>i
